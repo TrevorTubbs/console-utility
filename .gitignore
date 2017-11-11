@@ -4,3 +4,6 @@
 /Source/ConsoleUtility/obj
 /Source/Example/obj
 /Source/packages
+/Source/ConsoleUtility.Test/bin
+/Source/ConsoleUtility/bin
+/Source/Example/bin

@@ -48,5 +48,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ConsoleUtility\ConsoleUtility.csproj">
+      <Project>{997cdf78-a89f-4fa1-8a32-9f24b6ea0761}</Project>
+      <Name>ConsoleUtility</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
