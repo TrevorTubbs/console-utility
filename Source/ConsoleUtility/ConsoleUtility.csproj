@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="Input\ArgumentReader.cs" />
     <Compile Include="Prompt\Menu.cs" />
+    <Compile Include="Prompt\MenuItem.cs" />
+    <Compile Include="Prompt\MenuManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
