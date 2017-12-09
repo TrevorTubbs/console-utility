@@ -7,3 +7,4 @@
 /Source/ConsoleUtility.Test/bin
 /Source/ConsoleUtility/bin
 /Source/Example/bin
+*.user

@@ -1,12 +1,23 @@
 ﻿using System;
 
 namespace ConsoleUtility.Prompt {
+    /// <summary>
+    /// A utility for managing an application menu system.
+    /// </summary>
     public class MenuManager {
+        /// <summary>
+        /// A utility for managing an application menu system.
+        /// </summary>
+        /// <param name="mainMenu">The main menu of the application.</param>
+        /// <param name="write">The method to use for writing output.</param>
         public MenuManager(Menu mainMenu, Action<string> write) {
             MainMenu = mainMenu;
             Write = write ?? EmptyWrite;
         }
 
+        /// <summary>
+        /// Writes the menu.
+        /// </summary>
         public void Show() {
             Menu menu = SelectedMenu ?? MainMenu;
             Write(string.Empty);
@@ -22,6 +33,10 @@ namespace ConsoleUtility.Prompt {
             }
         }
 
+        /// <summary>
+        /// Selects the menu item specified by the key.
+        /// </summary>
+        /// <param name="key">A key indicating which item to select.</param>
         public void Select(string key) {
             Menu menu = SelectedMenu ?? MainMenu;
             MenuItem selection = null;
