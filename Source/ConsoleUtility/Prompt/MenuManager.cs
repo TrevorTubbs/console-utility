@@ -32,9 +32,8 @@ namespace ConsoleUtility.Prompt {
                 }
             }
 
-            if (selection != null) {
+            if (selection != null)
                 selection.Execute(selection.Key);
-            }
         }
 
         private Menu MainMenu { get; set; }
