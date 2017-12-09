@@ -86,6 +86,28 @@ namespace ConsoleUtility.Test.Prompt {
         }
 
         [Test]
+        public void ShowOmitsNumberPrefixForOneOption() {
+            SubMenu = new Menu(new[] { "header line 1", "header line 2" },
+                      new[] {
+                          new MenuItem() { Key = "u", Text = "uiop" }
+                      });
+            Manager.Show();
+            Manager.Select("1");
+            Output.Clear();
+
+            Manager.Show();
+
+            Assert.AreEqual(string.Empty, Output[0], "Line before sub menu.");
+            for (int i = 0; i + 1 < Output.Count && i < SubMenu.Header.Length; ++i) {
+                Assert.AreEqual(SubMenu.Header[i], Output[i + 1], $"Output[{i + 1}]");
+            }
+            for (int i = 0; i + SubMenu.Header.Length + 1 < Output.Count && i < SubMenu.Items.Length; ++i) {
+                Assert.AreEqual($"{SubMenu.Items[i].Text}", Output[i + SubMenu.Header.Length + 1], $"Output[{i + SubMenu.Header.Length + 1}]");
+            }
+            Assert.AreEqual(SubMenu.Header.Length + SubMenu.Items.Length + 1, Output.Count, "Line Count");
+        }
+
+        [Test]
         public void SelectInvokesExecuteMethodOnSubMenu() {
             int count = 0;
             SubMenu = new Menu(new[] { "header line 1", "header line 2" },

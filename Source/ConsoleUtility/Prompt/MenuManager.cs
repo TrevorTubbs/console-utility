@@ -13,8 +13,12 @@ namespace ConsoleUtility.Prompt {
             foreach (string line in menu.Header) {
                 Write(line);
             }
-            for (int i = 0; i < menu.Items.Length; ++i) {
-                Write($"{i + 1}. {menu.Items[i].Text}");
+            if (menu.Items.Length != 1) {
+                for (int i = 0; i < menu.Items.Length; ++i) {
+                    Write($"{i + 1}. {menu.Items[i].Text}");
+                }
+            } else {
+                Write(menu.Items[0].Text);
             }
         }
 
