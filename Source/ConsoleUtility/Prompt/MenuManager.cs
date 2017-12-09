@@ -8,35 +8,46 @@ namespace ConsoleUtility.Prompt {
         }
 
         public void Show() {
-            foreach (string line in MainMenu.Header) {
+            Menu menu = SelectedMenu ?? MainMenu;
+            Write(string.Empty);
+            foreach (string line in menu.Header) {
                 Write(line);
             }
-            Write(string.Empty);
-            for (int i = 0; i < MainMenu.Items.Length; ++i) {
-                Write($"{i + 1}. {MainMenu.Items[i].Text}");
+            for (int i = 0; i < menu.Items.Length; ++i) {
+                Write($"{i + 1}. {menu.Items[i].Text}");
             }
         }
 
         public void Select(string key) {
-            bool useNumber = int.TryParse(key, out int number);
-
+            Menu menu = SelectedMenu ?? MainMenu;
             MenuItem selection = null;
-            if (useNumber && number - 1 < MainMenu.Items.Length)
-                selection = MainMenu.Items[number - 1];
-            else {
-                for (int i = 0; i < MainMenu.Items.Length; ++i) {
-                    if (string.Compare(key, MainMenu.Items[i].Key, StringComparison.CurrentCultureIgnoreCase) == 0) {
-                        selection = MainMenu.Items[i];
-                        break;
+            string input = null;
+
+            if (menu.Items.Length == 1) {
+                selection = menu.Items[0];
+                input = key;
+            } else {
+                bool useNumber = int.TryParse(key, out int number);
+                if (useNumber && number - 1 < menu.Items.Length) {
+                    selection = menu.Items[number - 1];
+                } else {
+                    for (int i = 0; i < menu.Items.Length; ++i) {
+                        if (string.Compare(key, menu.Items[i].Key, StringComparison.CurrentCultureIgnoreCase) == 0) {
+                            selection = menu.Items[i];
+                            break;
+                        }
                     }
                 }
             }
 
-            if (selection != null)
-                selection.Execute(selection.Key);
+            if (selection != null) {
+                SelectedMenu = selection.Execute(input ?? selection.Key);
+            }
         }
 
         private Menu MainMenu { get; set; }
+
+        private Menu SelectedMenu { get; set; }
 
         private Action<string> Write { get; set; }
 

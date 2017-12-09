@@ -23,6 +23,7 @@ namespace ConsoleUtility.Test.Prompt {
             MainMenu = null;
             Output = null;
             ExecuteList = null;
+            SubMenu = null;
         }
 
         public MenuManager Manager { get; set; }
@@ -32,11 +33,11 @@ namespace ConsoleUtility.Test.Prompt {
         public void ShowWritesMenuText() {
             Manager.Show();
 
-            for (int i = 0; i < Output.Count && i < MainMenu.Header.Length; ++i) {
-                Assert.AreEqual(MainMenu.Header[i], Output[i], $"Output[{i}]");
+            Assert.AreEqual(string.Empty, Output[0], "Line before menu header.");
+            for (int i = 0; i + 1 < Output.Count && i < MainMenu.Header.Length; ++i) {
+                Assert.AreEqual(MainMenu.Header[i], Output[i + 1], $"Output[{i + 1}]");
             }
-            Assert.AreEqual(string.Empty, Output[MainMenu.Header.Length], "Line between header and menu items.");
-            for (int i = 0; i + MainMenu.Header.Length + 1 < Output.Count  && i < MainMenu.Items.Length; ++i) {
+            for (int i = 0; i + MainMenu.Header.Length + 1 < Output.Count && i < MainMenu.Items.Length; ++i) {
                 Assert.AreEqual($"{i + 1}. {MainMenu.Items[i].Text}", Output[i + MainMenu.Header.Length + 1], $"Output[{i + MainMenu.Header.Length + 1}]");
             }
             Assert.AreEqual(MainMenu.Header.Length + MainMenu.Items.Length + 1, Output.Count, "Line Count");
@@ -60,6 +61,92 @@ namespace ConsoleUtility.Test.Prompt {
             Assert.AreEqual(1, ExecuteList.Count, "Execution Count");
         }
 
+        [Test]
+        public void ShowPrintsSubMenuAfterSelect() {
+            SubMenu = new Menu(new[] { "header line 1", "header line 2" },
+                      new[] {
+                          new MenuItem() { Key = "u", Text = "uiop" },
+                          new MenuItem() { Key = "j", Text = "jkl" },
+                          new MenuItem() { Key = "n", Text = "nm" }
+                      });
+            Manager.Show();
+            Manager.Select("1");
+            Output.Clear();
+
+            Manager.Show();
+
+            Assert.AreEqual(string.Empty, Output[0], "Line before sub menu.");
+            for (int i = 0; i + 1 < Output.Count && i < SubMenu.Header.Length; ++i) {
+                Assert.AreEqual(SubMenu.Header[i], Output[i + 1], $"Output[{i + 1}]");
+            }
+            for (int i = 0; i + SubMenu.Header.Length + 1 < Output.Count && i < SubMenu.Items.Length; ++i) {
+                Assert.AreEqual($"{i + 1}. {SubMenu.Items[i].Text}", Output[i + SubMenu.Header.Length + 1], $"Output[{i + SubMenu.Header.Length + 1}]");
+            }
+            Assert.AreEqual(SubMenu.Header.Length + SubMenu.Items.Length + 1, Output.Count, "Line Count");
+        }
+
+        [Test]
+        public void SelectInvokesExecuteMethodOnSubMenu() {
+            int count = 0;
+            SubMenu = new Menu(new[] { "header line 1", "header line 2" },
+                      new[] {
+                          new MenuItem() { Key = "u", Text = "uiop" },
+                          new MenuItem() { Key = "j", Text = "jkl", Execute = (input) => {
+                              ++count;
+                              return null;
+                          } },
+                          new MenuItem() { Key = "n", Text = "nm" }
+                      });
+            Manager.Show();
+            Manager.Select("1");
+            Manager.Show();
+
+            Manager.Select("j");
+
+            Assert.AreEqual(1, count, "Execution Count");
+        }
+
+        [Test]
+        public void ShowUsesMainMenuWhenExecuteReturnsNull() {
+            int count = 0;
+            SubMenu = new Menu(new[] { "header line 1", "header line 2" },
+                      new[] {
+                          new MenuItem() { Key = "u", Text = "uiop", Execute = (input) => {
+                              ++count;
+                              return null;
+                          } },
+                          new MenuItem() { Key = "j", Text = "jkl" },
+                          new MenuItem() { Key = "n", Text = "nm" }
+                      });
+            Manager.Show();
+            Manager.Select("1");
+            Manager.Show();
+            Manager.Select("u");
+            Output.Clear();
+
+            ShowWritesMenuText();
+        }
+
+        [Test]
+        public void SelectChoosesFirstOptionWhenOnlyOneOption() {
+            string expected = "this is my input";
+            string actual = null;
+            SubMenu = new Menu(null,
+                      new[] {
+                          new MenuItem() { Key = "u", Text = "uiop", Execute = (input) => {
+                              actual = input;
+                              return null;
+                          } }
+                      });
+            Manager.Show();
+            Manager.Select("1");
+            Manager.Show();
+
+            Manager.Select(expected);
+
+            Assert.AreEqual(expected, actual, "Input");
+        }
+
         public void WriteOutput(string output) {
             Output.Add(output);
         }
@@ -68,18 +155,20 @@ namespace ConsoleUtility.Test.Prompt {
 
         private Menu ExecuteFirstChoice(string key) {
             ExecuteList.Add(new KeyValuePair<int, string>(1, key));
-            return null;
+            return SubMenu;
         }
 
         private Menu ExecuteSecondChoice(string key) {
             ExecuteList.Add(new KeyValuePair<int, string>(2, key));
-            return null;
+            return SubMenu;
         }
 
         private Menu ExecuteThirdChoice(string key) {
             ExecuteList.Add(new KeyValuePair<int, string>(3, key));
-            return null;
+            return SubMenu;
         }
+
+        private Menu SubMenu { get; set; }
 
         private List<KeyValuePair<int, string>> ExecuteList { get; set; }
     }
