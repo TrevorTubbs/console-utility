@@ -4,38 +4,26 @@ using NUnit.Framework;
 namespace ConsoleUtility.Test.Input {
     [TestFixture]
     public class ArgumentReaderTests {
-        [SetUp]
-        public void SetUp() {
-            Reader = new ArgumentReader();
-        }
-
-        [TearDown]
-        public void TearDown() {
-            Reader = null;
-        }
-
-        private ArgumentReader Reader { get; set; }
-
         [Test]
         public void SetArgumentsAcceptsNull() {
-            Reader.SetArguments(null);
+            new ArgumentReader(null);
         }
 
         [Test]
         public void SetArgumentsAcceptsEmptyArray() {
-            Reader.SetArguments(new string[0]);
+            new ArgumentReader(new string[0]);
         }
 
         [Test]
         public void SetArgumentsAcceptsArrayWithNullElement() {
-            Reader.SetArguments(new[] { "foo", null, "bar" });
+            new ArgumentReader(new[] { "foo", null, "bar" });
         }
 
         [TestCaseSource("ArgumentsTestCaseSource")]
         public void GetValue(string[] arguments, string key, string expected) {
-            Reader.SetArguments(arguments);
+            var reader = new ArgumentReader(arguments);
 
-            string actual = Reader.GetValue(key);
+            string actual = reader.GetValue(key);
 
             Assert.AreEqual(expected, actual, $"GetValue(\"{key}\")");
         }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ConsoleUtility.Input {
     public class ArgumentReader {
-        public void SetArguments(string[] arguments) {
+        public ArgumentReader(string[] arguments) {
             if (arguments == null) {
                 Values = null;
                 return;
