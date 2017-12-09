@@ -19,10 +19,21 @@ namespace ConsoleUtility.Prompt {
 
         public void Select(string key) {
             bool useNumber = int.TryParse(key, out int number);
-            for (int i = 0; i < MainMenu.Items.Length; ++i) {
-                if ((useNumber && number - 1 == i)  || string.Compare(key, MainMenu.Items[i].Key, StringComparison.CurrentCultureIgnoreCase) == 0) {
-                    MainMenu.Items[i].Execute(MainMenu.Items[i].Key);
+
+            MenuItem selection = null;
+            if (useNumber && number - 1 < MainMenu.Items.Length)
+                selection = MainMenu.Items[number - 1];
+            else {
+                for (int i = 0; i < MainMenu.Items.Length; ++i) {
+                    if (string.Compare(key, MainMenu.Items[i].Key, StringComparison.CurrentCultureIgnoreCase) == 0) {
+                        selection = MainMenu.Items[i];
+                        break;
+                    }
                 }
+            }
+
+            if (selection != null) {
+                selection.Execute(selection.Key);
             }
         }
 
